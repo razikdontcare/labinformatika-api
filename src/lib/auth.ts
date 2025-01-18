@@ -59,6 +59,7 @@ export const loginWithUsername = async (credentials: {
 
     const token = await createCustomToken(userId, {
       username: credentials.username,
+      role: user.role,
     });
 
     return { token, userId, user };

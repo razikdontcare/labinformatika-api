@@ -14,6 +14,7 @@ auth.post("/login", async (c) => {
 
     await au.setCustomUserClaims(result.userId, {
       username: result.user.username,
+      role: result.user.role,
     });
 
     const userRecord = await au.updateUser(result.userId, {
