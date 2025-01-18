@@ -61,7 +61,7 @@ export const loginWithUsername = async (credentials: {
       username: credentials.username,
     });
 
-    return token;
+    return { token, userId, user };
   } catch (error) {
     console.error("Error logging in with username:", error);
     throw new Error("Failed to login with username");
