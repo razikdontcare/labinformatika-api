@@ -1,3 +1,4 @@
+import generateId from "../utils/generateId.js";
 import { saltPassword } from "../utils/saltPassword.js";
 import { auth, db } from "./firebase.js";
 import bcrypt from "bcryptjs";
@@ -78,6 +79,17 @@ export const createUser = async (credentials: {
   try {
     const passwordHash = await saltPassword(credentials.password);
 
+    const userSnapshot = await db
+      .collection("users")
+      .where("username", "==", credentials.username)
+      .get();
+
+    if (!userSnapshot.empty) {
+      throw new Error("Username already exists");
+    }
+
+    const userId = generateId("IFUSER");
+
     const user = {
       username: credentials.username,
       email: credentials.email,
@@ -86,8 +98,8 @@ export const createUser = async (credentials: {
       role: credentials.role || "user",
     };
 
-    const userRef = await db.collection("users").add(user);
-    return userRef.id;
+    const userRef = await db.collection("users").doc(userId).set(user);
+    return { id: userId, ...user, ref: userRef };
   } catch (error) {
     console.error("Error creating user:", error);
     throw new Error("Failed to create user");

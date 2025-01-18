@@ -43,8 +43,8 @@ auth.post("/login", async (c) => {
 auth.post("/register", async (c) => {
   try {
     const { username, password, email, role } = await c.req.json();
-    const uid = await createUser({ username, email, password, role });
-    return c.json({ uid: uid }, 201);
+    const user = await createUser({ username, email, password, role });
+    return c.json({ user }, 201);
   } catch (error) {
     console.error("Error in /register route:", error);
     return c.json({ error: "Failed to register" }, 500);
