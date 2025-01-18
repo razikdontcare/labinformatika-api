@@ -15,9 +15,10 @@ pr.post("/upload-image", async (c) => {
   try {
     const body = await c.req.parseBody();
     const file = body["file"] as File;
+    const filename = body["filename"] as string | undefined;
     if (!file) return c.json({ error: "No file found" }, 400);
 
-    const res = await uploadImage(file);
+    const res = await uploadImage(file, filename);
     return c.json({ url: res.url }, 200);
   } catch (error) {
     console.error("Error in /upload-image route:", error);

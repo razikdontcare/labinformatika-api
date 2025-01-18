@@ -6,10 +6,10 @@ import "dotenv/config";
 const app = new Hono();
 
 app.use(async (c, next) => {
-  const { method, url } = c.req;
+  const { method, path } = c.req;
   const day = new Date().toLocaleDateString();
   const time = new Date().toLocaleTimeString();
-  console.log(`[${day} ${time}] ${method} ${url}`);
+  console.log(`[${day} ${time}] ${method} ${path}`);
   await next();
 });
 

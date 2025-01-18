@@ -1,13 +1,23 @@
 import { db } from "./firebase.js";
 import { img } from "./imagekit.js";
 import type { Project } from "../type.js";
+import path from "path";
 
-export async function uploadImage(file: File) {
+export async function uploadImage(file: File, filename?: string) {
   try {
     const buffer = await file.arrayBuffer();
+    const folder = "labinformatika";
+    const fileExtension =
+      filename && path.extname(filename) !== ""
+        ? path.extname(filename)
+        : path.extname(file.name);
     const res = await img.upload({
       file: Buffer.from(buffer),
-      fileName: file.name,
+      fileName: filename
+        ? path.basename(filename, fileExtension) + fileExtension
+        : file.name,
+      useUniqueFileName: false,
+      folder,
     });
     return res;
   } catch (error) {
