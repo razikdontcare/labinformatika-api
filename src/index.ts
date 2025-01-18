@@ -1,6 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import pr from "./routes/projects.js";
+import auth from "./routes/auth.js";
 import "dotenv/config";
 
 const app = new Hono();
@@ -14,10 +15,11 @@ app.use(async (c, next) => {
 });
 
 app.get("/", (c) => {
-  return c.json({ msg: "Lab Informatika Official API", version: "1.0.0" });
+  return c.json({ msg: "Lab Informatika Official API", version: "1.1.0" });
 });
 
 app.route("/project", pr);
+app.route("/auth", auth);
 
 const port = parseInt(process.env.PORT ? process.env.PORT : "8000");
 console.log(`- Server is running on http://localhost:${port}\n`);
