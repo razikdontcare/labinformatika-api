@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { createUser, loginWithUsername } from "../lib/auth.js";
-import { auth as au } from "../lib/firebase.js";
 
 const auth = new Hono();
 
@@ -12,25 +11,10 @@ auth.post("/login", async (c) => {
       password: password,
     });
 
-    await au.setCustomUserClaims(result.userId, {
-      username: result.user.username,
-      role: result.user.role,
-    });
-
-    const userRecord = await au.updateUser(result.userId, {
-      displayName: result.user.username,
-      email: result.user.email,
-      emailVerified: result.user.email.includes("unud.ac.id") ? true : false,
-    });
-
     return c.json(
       {
         token: result.token,
-        user: {
-          id: userRecord.uid,
-          email: userRecord.email,
-          username: userRecord.customClaims?.username || result.user.username,
-        },
+        email: result.user.email,
       },
       200
     );
