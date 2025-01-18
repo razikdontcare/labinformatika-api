@@ -72,6 +72,7 @@ export const createUser = async (credentials: {
   username: string;
   email: string;
   password: string;
+  role?: string;
 }) => {
   try {
     const passwordHash = await saltPassword(credentials.password);
@@ -81,6 +82,7 @@ export const createUser = async (credentials: {
       email: credentials.email,
       passwordHash,
       createdAt: new Date(),
+      role: credentials.role || "user",
     };
 
     const userRef = await db.collection("users").add(user);
