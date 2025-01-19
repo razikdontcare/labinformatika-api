@@ -2,7 +2,7 @@
   "name": "labinformatika-api",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch api/index.ts",
     "build": "tsc --outDir dist",
     "start": "node dist/index.js"
   },

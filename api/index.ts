@@ -4,6 +4,8 @@ import pr from "./routes/projects.js";
 import auth from "./routes/auth.js";
 import "dotenv/config";
 
+export const runtime = "nodejs";
+
 const app = new Hono();
 
 app.use(async (c, next) => {
@@ -21,10 +23,11 @@ app.get("/", (c) => {
 app.route("/project", pr);
 app.route("/auth", auth);
 
-const port = parseInt(process.env.PORT ? process.env.PORT : "8000");
-console.log(`- Server is running on http://localhost:${port}\n`);
+app.notFound((c) => {
+  return c.json({ error: "Not found" }, 404);
+});
 
-serve({
+export default serve({
   fetch: app.fetch,
-  port,
+  port: 8000,
 });
