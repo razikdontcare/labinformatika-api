@@ -4,8 +4,6 @@ import pr from "./routes/projects.js";
 import auth from "./routes/auth.js";
 import "dotenv/config";
 
-export const runtime = "nodejs";
-
 const app = new Hono();
 
 app.use(async (c, next) => {
