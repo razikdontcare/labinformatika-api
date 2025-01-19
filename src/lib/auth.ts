@@ -3,6 +3,16 @@ import { saltPassword } from "../utils/saltPassword.js";
 import { auth, db } from "./firebase.js";
 import bcrypt from "bcryptjs";
 
+export class AuthError extends Error {
+  code: string;
+
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "AuthError";
+  }
+}
+
 export const validatePassword = async (
   password: string,
   hashedPassword: string
@@ -19,7 +29,7 @@ export const createCustomToken = async (
     return token;
   } catch (error) {
     console.error("Error creating custom token:", error);
-    throw new Error("Failed to create custom token");
+    throw error;
   }
 };
 
@@ -29,7 +39,7 @@ export const verifyIdToken = async (token: string) => {
     return decodedToken;
   } catch (error) {
     console.error("Error verifying ID token:", error);
-    throw new Error("Failed to verify ID token");
+    throw error;
   }
 };
 
@@ -44,7 +54,7 @@ export const loginWithUsername = async (credentials: {
       .get();
 
     if (userSnapshot.empty) {
-      throw new Error("User not found");
+      throw new AuthError("USER_NOT_FOUND", "User not found");
     }
 
     const user = userSnapshot.docs[0].data();
@@ -55,7 +65,7 @@ export const loginWithUsername = async (credentials: {
       user.passwordHash
     );
     if (!isValid) {
-      throw new Error("Invalid password");
+      throw new AuthError("INVALID_PASSWORD", "Invalid password");
     }
 
     const token = await createCustomToken(userId, {
@@ -66,7 +76,7 @@ export const loginWithUsername = async (credentials: {
     return { token, userId, user };
   } catch (error) {
     console.error("Error logging in with username:", error);
-    throw new Error("Failed to login with username");
+    throw error;
   }
 };
 
@@ -84,8 +94,23 @@ export const createUser = async (credentials: {
       .where("username", "==", credentials.username)
       .get();
 
+    const emailSnapshot = await db
+      .collection("users")
+      .where("email", "==", credentials.email)
+      .get();
+
     if (!userSnapshot.empty) {
-      throw new Error("Username already exists");
+      throw new AuthError(
+        "USER_EXISTS",
+        "Account with that username already exists"
+      );
+    }
+
+    if (!emailSnapshot.empty) {
+      throw new AuthError(
+        "EMAIL_EXISTS",
+        "Account with that email already exists"
+      );
     }
 
     const userId = generateId("IFUSER");
@@ -102,6 +127,6 @@ export const createUser = async (credentials: {
     return { id: userId, ...user, ref: userRef };
   } catch (error) {
     console.error("Error creating user:", error);
-    throw new Error("Failed to create user");
+    throw error;
   }
 };
