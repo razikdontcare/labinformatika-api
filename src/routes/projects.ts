@@ -92,4 +92,22 @@ pr.delete("/delete/:id", async (c) => {
   }
 });
 
+pr.put("/update/:id", async (c) => {
+  try {
+    const user = c.get("user");
+    if (user.role !== "admin") return c.json({ error: "Unauthorized" }, 401);
+    const id = c.req.param("id");
+    const body = (await c.req.json()) as Partial<Project>;
+    const data = {
+      ...body,
+      updatedAt: new Date(),
+    };
+    const res = await db.collection("projects").doc(id).update(data);
+    return c.json(res, 200);
+  } catch (error) {
+    console.error("Error in /update route:", error);
+    return c.json({ error: "Failed to update project" }, 500);
+  }
+});
+
 export default pr;

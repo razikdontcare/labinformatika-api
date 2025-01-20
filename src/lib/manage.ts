@@ -65,3 +65,13 @@ export async function listProjects() {
     throw new Error("Failed to list projects");
   }
 }
+
+export async function updateProject(id: string, data: Partial<Project>) {
+  try {
+    await db.collection("projects").doc(id).update(data);
+    return data;
+  } catch (error) {
+    console.error("Error updating project:", error);
+    throw new Error("Failed to update project");
+  }
+}
