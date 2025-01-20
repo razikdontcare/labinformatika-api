@@ -1,8 +1,13 @@
+export interface Creator {
+  name: string;
+  nim: string;
+}
+
 export interface ProjectData {
   name: string;
   description: string;
   picture: string;
-  creators: string[];
+  creators: Creator[];
   projectUrl: string;
   createdAt: Date;
   updatedAt: Date;
