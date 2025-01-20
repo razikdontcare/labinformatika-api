@@ -5,12 +5,12 @@ import {
   listProjects,
   uploadImage,
 } from "../lib/manage.js";
-import type { Project, ProjectData } from "../type.js";
+import type { Project, ProjectData, Variables } from "../type.js";
 import generateId from "../utils/generateId.js";
 import isExists from "../utils/isExists.js";
 import { db } from "../lib/firebase.js";
 
-const pr = new Hono();
+const pr = new Hono<{ Variables: Variables }>();
 
 pr.post("/upload-image", async (c) => {
   try {
@@ -29,6 +29,8 @@ pr.post("/upload-image", async (c) => {
 
 pr.post("/add", async (c) => {
   try {
+    const user = c.get("user");
+    if (user.role !== "admin") return c.json({ error: "Unauthorized" }, 401);
     const body = (await c.req.json()) as ProjectData;
     let id = generateId();
     while (await isExists(id)) id = generateId();
@@ -70,6 +72,8 @@ pr.get("/list", async (c) => {
 
 pr.delete("/delete/:id", async (c) => {
   try {
+    const user = c.get("user");
+    if (user.role !== "admin") return c.json({ error: "Unauthorized" }, 401);
     const id = c.req.param("id");
     await db.collection("projects").doc(id).delete();
     return c.json({ message: "Project deleted" }, 200);

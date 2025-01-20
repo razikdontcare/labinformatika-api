@@ -1,3 +1,5 @@
+import type { DecodedIdToken } from "firebase-admin/auth";
+
 export interface Creator {
   name: string;
   nim: string;
@@ -16,3 +18,7 @@ export interface ProjectData {
 export interface Project extends ProjectData {
   id: string;
 }
+
+export type Variables = {
+  user: DecodedIdToken;
+};
