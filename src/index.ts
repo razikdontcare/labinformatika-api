@@ -8,7 +8,13 @@ import type { Variables } from "./type.js";
 
 const app = new Hono<{ Variables: Variables }>();
 
-const PUBLIC_PATH = ["/", "/auth/login", "/project/list", "/project/get"];
+const PUBLIC_PATH = [
+  "/",
+  "/auth/login",
+  "/auth/register",
+  "/project/list",
+  "/project/get",
+];
 
 app.use(async (c, next) => {
   const authorization = c.req.header("Authorization")?.split(" ")[1];

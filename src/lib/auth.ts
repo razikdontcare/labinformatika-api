@@ -1,3 +1,4 @@
+import type { Role, UserDetail } from "../type.js";
 import generateId from "../utils/generateId.js";
 import { saltPassword } from "../utils/saltPassword.js";
 import { auth, db } from "./firebase.js";
@@ -84,7 +85,8 @@ export const createUser = async (credentials: {
   username: string;
   email: string;
   password: string;
-  role?: string;
+  role?: Role;
+  emailVerified?: boolean;
 }) => {
   try {
     const passwordHash = await saltPassword(credentials.password);
@@ -115,18 +117,38 @@ export const createUser = async (credentials: {
 
     const userId = generateId("IFUSER");
 
-    const user = {
+    const user: UserDetail = {
+      id: userId,
       username: credentials.username,
       email: credentials.email,
       passwordHash,
       createdAt: new Date(),
       role: credentials.role || "user",
+      emailVerified: credentials.emailVerified || false,
+      picture: {
+        url: "",
+        id: "",
+      },
     };
 
     const userRef = await db.collection("users").doc(userId).set(user);
-    return { id: userId, ...user, ref: userRef };
+    return { ...user, ref: userRef };
   } catch (error) {
     console.error("Error creating user:", error);
+    throw error;
+  }
+};
+
+export const listUsers = async (): Promise<UserDetail[]> => {
+  try {
+    const snapshot = await db.collection("users").get();
+    if (snapshot.empty) return [] as UserDetail[];
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as UserDetail[];
+  } catch (error) {
+    console.error("Error listing users:", error);
     throw error;
   }
 };

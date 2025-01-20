@@ -5,6 +5,8 @@ export interface Creator {
   nim: string;
 }
 
+export type Role = "admin" | "user";
+
 export interface ProjectData {
   name: string;
   description: string;
@@ -20,6 +22,20 @@ export interface ProjectData {
 
 export interface Project extends ProjectData {
   id: string;
+}
+
+export interface UserDetail {
+  id: string;
+  createdAt: Date;
+  email: string;
+  passwordHash: string;
+  role: Role;
+  username: string;
+  picture: {
+    url: string;
+    id: string;
+  };
+  emailVerified: boolean;
 }
 
 export type Variables = {
