@@ -26,6 +26,15 @@ export async function uploadImage(file: File, filename?: string) {
   }
 }
 
+export async function deleteImage(id: string) {
+  try {
+    await img.deleteFile(id);
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    throw new Error("Failed to delete image");
+  }
+}
+
 export async function addProject(data: Project) {
   try {
     await db.collection("projects").doc(data.id).set(data);

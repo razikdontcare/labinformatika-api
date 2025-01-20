@@ -8,7 +8,10 @@ export interface Creator {
 export interface ProjectData {
   name: string;
   description: string;
-  picture: string;
+  picture: {
+    url: string;
+    id: string;
+  };
   creators: Creator[];
   projectUrl: string;
   createdAt: Date;
