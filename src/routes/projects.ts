@@ -8,6 +8,7 @@ import {
 import type { Project, ProjectData } from "../type.js";
 import generateId from "../utils/generateId.js";
 import isExists from "../utils/isExists.js";
+import { db } from "../lib/firebase.js";
 
 const pr = new Hono();
 
@@ -64,6 +65,17 @@ pr.get("/list", async (c) => {
   } catch (error) {
     console.error("Error in /list route:", error);
     return c.json({ error: "Failed to list projects" }, 500);
+  }
+});
+
+pr.delete("/delete/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    await db.collection("projects").doc(id).delete();
+    return c.json({ message: "Project deleted" }, 200);
+  } catch (error) {
+    console.error("Error in /delete route:", error);
+    return c.json({ error: "Failed to delete project" }, 500);
   }
 });
 
