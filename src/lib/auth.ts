@@ -1,8 +1,10 @@
+import path from "path";
 import type { Role, UserDetail } from "../type.js";
 import generateId from "../utils/generateId.js";
 import { saltPassword } from "../utils/saltPassword.js";
 import { auth, db } from "./firebase.js";
 import bcrypt from "bcryptjs";
+import { img } from "./imagekit.js";
 
 export class AuthError extends Error {
   code: string;
@@ -152,3 +154,26 @@ export const listUsers = async (): Promise<UserDetail[]> => {
     throw error;
   }
 };
+
+export async function uploadProfileImage(file: File, filename?: string) {
+  try {
+    const buffer = await file.arrayBuffer();
+    const folder = "labinformatika/users";
+    const fileExtension =
+      filename && path.extname(filename) !== ""
+        ? path.extname(filename)
+        : path.extname(file.name);
+    const res = await img.upload({
+      file: Buffer.from(buffer),
+      fileName: filename
+        ? path.basename(filename, fileExtension) + fileExtension
+        : file.name,
+      useUniqueFileName: false,
+      folder,
+    });
+    return res;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    throw new Error("Failed to upload image");
+  }
+}

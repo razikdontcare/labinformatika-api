@@ -5,6 +5,7 @@ export interface Creator {
   nim: string;
 }
 
+export type LabCollection = "projects" | "users";
 export type Role = "admin" | "user";
 
 export interface ProjectData {
