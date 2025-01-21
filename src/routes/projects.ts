@@ -36,8 +36,6 @@ pr.get("/generate-id", async (c) => {
 
 pr.post("/add", async (c) => {
   try {
-    const user = c.get("user");
-    if (user.role !== "admin") return c.json({ error: "Unauthorized" }, 401);
     const body = (await c.req.json()) as Project;
     let id = body.id == "" ? generateId() : body.id;
     const data: Project = {
@@ -78,8 +76,6 @@ pr.get("/list", async (c) => {
 
 pr.delete("/delete/:id", async (c) => {
   try {
-    const user = c.get("user");
-    if (user.role !== "admin") return c.json({ error: "Unauthorized" }, 401);
     const id = c.req.param("id");
     const projectRef = db.collection("projects").doc(id);
     const fileId = (await projectRef.get()).data()?.picture.id;
@@ -94,8 +90,6 @@ pr.delete("/delete/:id", async (c) => {
 
 pr.put("/update/:id", async (c) => {
   try {
-    const user = c.get("user");
-    if (user.role !== "admin") return c.json({ error: "Unauthorized" }, 401);
     const id = c.req.param("id");
     const body = (await c.req.json()) as Partial<Project>;
     const data = {
