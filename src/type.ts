@@ -26,7 +26,6 @@ export interface Project extends ProjectData {
 }
 
 export interface UserDetail {
-  id: string;
   createdAt: Date;
   email: string;
   passwordHash: string;
@@ -37,6 +36,10 @@ export interface UserDetail {
     id: string;
   };
   emailVerified: boolean;
+}
+
+export interface User extends UserDetail {
+  id: string;
 }
 
 export type Variables = {

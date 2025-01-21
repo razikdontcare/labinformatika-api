@@ -1,5 +1,5 @@
 import path from "path";
-import type { Role, UserDetail } from "../type.js";
+import type { Role, User, UserDetail } from "../type.js";
 import generateId from "../utils/generateId.js";
 import { saltPassword } from "../utils/saltPassword.js";
 import { auth, db } from "./firebase.js";
@@ -119,7 +119,7 @@ export const createUser = async (credentials: {
 
     const userId = generateId("IFUSER");
 
-    const user: UserDetail = {
+    const user: User = {
       id: userId,
       username: credentials.username,
       email: credentials.email,
@@ -148,7 +148,7 @@ export const listUsers = async (): Promise<UserDetail[]> => {
     return snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-    })) as UserDetail[];
+    })) as User[];
   } catch (error) {
     console.error("Error listing users:", error);
     throw error;
@@ -175,5 +175,23 @@ export async function uploadProfileImage(file: File, filename?: string) {
   } catch (error) {
     console.error("Error uploading image:", error);
     throw new Error("Failed to upload image");
+  }
+}
+
+export async function updateUser(data: Partial<User>) {
+  try {
+    if (!data.id) {
+      throw new AuthError("MISSING_ID", "Missing user ID");
+    }
+    const userRef = db.collection("users").doc(data.id);
+    const userSnapshot = await userRef.get();
+    if (!userSnapshot.exists) {
+      throw new AuthError("USER_NOT_FOUND", "User not found");
+    }
+    await userRef.update(data);
+    return (await userRef.get()).data() as User;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
   }
 }

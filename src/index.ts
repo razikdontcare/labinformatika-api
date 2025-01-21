@@ -14,6 +14,8 @@ const PUBLIC_PATH = [
   "/auth/register",
   "/project/list",
   "/project/get",
+  "/auth/check-username",
+  "/auth/check-email",
 ];
 
 app.use(async (c, next) => {
