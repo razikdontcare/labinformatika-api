@@ -55,6 +55,8 @@ app.notFound((c) => {
   return c.json({ error: "Not found" }, 404);
 });
 
+console.log("Server started at http://localhost:8000");
+
 export default serve({
   fetch: app.fetch,
   port: 8000,

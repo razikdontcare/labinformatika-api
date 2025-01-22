@@ -25,7 +25,7 @@ This is the official API for Lab Informatika. It provides endpoints for managing
     npm run dev
     ```
 
-The server should now be running on `http://localhost:{port}` where `port` is the port specified in the `.env` file.
+The server should now be running on `http://localhost:8000`
 
 ## Scripts
 
