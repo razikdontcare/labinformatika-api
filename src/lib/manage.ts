@@ -57,7 +57,10 @@ export async function getProject(id: string) {
 
 export async function listProjects() {
   try {
-    const snapshot = await db.collection("projects").get();
+    const snapshot = await db
+      .collection("projects")
+      .orderBy("updatedAt", "desc")
+      .get();
     if (snapshot.empty) return [];
     return snapshot.docs.map((doc) => doc.data());
   } catch (error) {
